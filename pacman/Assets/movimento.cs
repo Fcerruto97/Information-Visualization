@@ -9,7 +9,7 @@ public class movimento : MonoBehaviour
     private Rigidbody rigidBody;
     private static int count = 0;
     private static bool power = false;
-    private static int life = 3;
+    private static int life = 3, countEat= 0;
 
     // Start is called before the first frame update
     void Start()
@@ -72,7 +72,6 @@ public class movimento : MonoBehaviour
         {
             Debug.Log("Perso");
             SceneManager.LoadScene("Game Over");
-            //startCoroutine(loadScene());
         }
     }
 
@@ -104,7 +103,10 @@ public class movimento : MonoBehaviour
         {
             if (power)
             {
-                Destroy(col.gameObject);
+                countEat++;
+                col.gameObject.transform.position = new Vector3(0.1f, 0.084f, 0.615f);
+                count += countEat*200;
+                punteggio.text = "Punteggio  = " + count;
             }
             else
             {
@@ -137,6 +139,7 @@ public class movimento : MonoBehaviour
             timer -= Time.deltaTime; 
             Debug.Log(timer);
         }
-        power = false;
+        countEat = 0;
+        //power = false;
     }    
 }
