@@ -3,6 +3,8 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 
+/[Ll]ibrary/
+/[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
@@ -57,6 +59,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-*.package-manager-ui@2.0
-.pacman.Library
-.pacman.Temp
+*package-manager-ui@2.0
+pacman/Library
+pacman/Temp
