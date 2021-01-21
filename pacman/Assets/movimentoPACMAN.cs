@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class movimentoPACMAN : MonoBehaviour
 {
@@ -94,7 +95,7 @@ public class movimentoPACMAN : MonoBehaviour
 
         if (col.gameObject.tag == "ghost")
         {
-            Debug.Log(col.gameObject.GetComponent<Material>().name);
+            //Debug.Log(col.gameObject.GetComponent<Material>().name);
             if (power)
             {
                 countEat++;
@@ -118,22 +119,66 @@ public class movimentoPACMAN : MonoBehaviour
 
     public void powerEat()
     {
-        float timer = 10f;
+        
         power = true;
-        while (timer > 0)
-        {
-            if (timer % 2 == 0)
-            {
-
-            }
-            else
-            {
-
-            }        
-            timer -= Time.deltaTime; 
-            Debug.Log(timer);
-        }
+        StartCoroutine(waitPower());
         countEat = 0;
-        //power = false;
-    }    
+        power = false;
+    }
+    IEnumerator waitPower()
+    {
+        yield return new WaitForSeconds(10);
+    }
+    /*public override void OnEpisodeBegin()
+    {
+        this.rigidBody.angularVelocity = Vector3.zero;
+        this.rigidBody.velocity = Vector3.zero;
+        this.transform.localPosition = new Vector3(0f + posX, 0.084f, 0.615f + posZ);
+    }
+    
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(target.localPosition);
+        sensor.AddObservation(this.transform.localPosition);
+    }
+
+    public override void OnActionReceived(float[] vectorAction)
+    {
+        Vector3 move = Vector3.zero;
+        move.x = vectorAction[0];
+
+        if (vectorAction[1] == 2)
+        {
+            move.z = 1;
+        } else
+        {
+            move.z = -vectorAction[1];
+        }
+
+        rigidBody.AddForce(move * speed);
+
+        if (transform.position.x > 9.4f)
+        {
+            transform.position = new Vector3(-8.5f, 0.084f, 0.69f);
+        }
+
+        if (transform.position.x < -8.9f)
+        {
+            transform.position = new Vector3(9.0f, 0.084f, 0.69f);
+        }
+
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, target.localPosition);
+
+        if (distanceToTarget < 1f)
+        {
+            SetReward(1.0f);
+            EndEpisode();
+        }
+
+        if (sfere.text.Equals("0"))
+        {
+            SetReward(-1.0f);
+            EndEpisode();
+        }
+    }*/
 }
