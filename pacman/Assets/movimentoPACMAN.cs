@@ -2,14 +2,14 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class movimento : MonoBehaviour
+public class movimentoPACMAN : MonoBehaviour
 {
-    public Text punteggio, vite;
+    public Text punteggio, vite, sfere;
     public float speed;
     private Rigidbody rigidBody;
     private static int count = 0;
     private static bool power = false;
-    private static int life = 3, countEat= 0;
+    private static int life = 3, countEat= 0, countSfereEat = 240;
 
     // Start is called before the first frame update
     void Start()
@@ -55,7 +55,6 @@ public class movimento : MonoBehaviour
 
         if (transform.position.x < -8.9f)
         {
-            Debug.Log("(" + transform.position.x + "," + transform.position.y + "," + transform.position.z + ")");
             transform.position = new Vector3(9.0f, 0.084f, 0.69f);
         }
     }
@@ -75,14 +74,6 @@ public class movimento : MonoBehaviour
         }
     }
 
-    /*  IEnumerator loadScene()
-      {
-
-          SceneManager.LoadScene("Livello");
-
-      }
-      */
-
     public void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "bonus")
@@ -90,6 +81,8 @@ public class movimento : MonoBehaviour
             Destroy(col.gameObject);
             count += 100;
             punteggio.text = "Punteggio  = " + count;
+            countSfereEat--;
+            sfere.text = "" + countSfereEat;
         }
 
         if (col.gameObject.tag == "cerry")
@@ -101,6 +94,7 @@ public class movimento : MonoBehaviour
 
         if (col.gameObject.tag == "ghost")
         {
+            Debug.Log(col.gameObject.GetComponent<Material>().name);
             if (power)
             {
                 countEat++;
