@@ -5,11 +5,14 @@ using UnityEngine.AI;
 public class EnemyAi: MonoBehaviour
 {
     public NavMeshAgent agent;
+    public NavMeshAgent agent2;
+    public NavMeshAgent agent3;
+    public NavMeshAgent agent4;
+
     public Transform player;
+    public Transform position;
     public LayerMask whatIsGround;
-    //private Rigidbody rigidBody;
-
-
+    
     //Patroling
     public Vector3 walkPoint;
     bool walkPointSet = true;
@@ -17,47 +20,58 @@ public class EnemyAi: MonoBehaviour
 
     void Start()
     {
-        //rigidBody = this.GetComponent<Rigidbody>();
-        agent = this.GetComponent<NavMeshAgent>();
-        //rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;        
+        agent = this.GetComponent<NavMeshAgent>();        
     }
 
     private void Awake()
     {
+        StartCoroutine(TimerAwake());
         player = GameObject.Find("Chomp").transform;
         agent = this.GetComponent<NavMeshAgent>();
+        agent.SetDestination(position.position);
+        walkPointSet = false;
     }
 
     private void Update()
     {
         Vector3 distanceToPacman = this.transform.position - player.transform.position;
 
-        if (distanceToPacman.magnitude > 6f) { Patroling(); Debug.Log("patrol"); }
-            else { ChasePlayer(); walkPointSet = false; Debug.Log("Chase"); }
-
+        if (distanceToPacman.magnitude > 6f) { Patroling(); Debug.Log("patrol "+ agent.name); }
+            else { ChasePlayer(); walkPointSet = false; Debug.Log("Chase" + agent.name); }
     }
 
     private void Patroling()
     {
         if (!walkPointSet) SearchWalkPoint();
 
+        Vector3 distance2 = this.transform.position - agent2.transform.position;
+        Vector3 distance3 = this.transform.position - agent3.transform.position;
+        Vector3 distance4 = this.transform.position - agent4.transform.position;
+
+        if (distance2.magnitude < 1f || distance3.magnitude < 1f || distance4.magnitude < 1f)
+        {
+            SearchWalkPoint();
+        }
+
         Vector3 distanceToWalkPoint = this.transform.position - walkPoint;
 
         //Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 2f)
+        if (distanceToWalkPoint.magnitude < 1.5f)
             walkPointSet = false;
     }
+
     private void SearchWalkPoint()
     {
         //Calculate random point in range
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
+        float randomChange = 1;
 
-        if((transform.position.x + randomX)>24f || (transform.position.x + randomX) < -24f) { randomX = 0; }
-        if ((transform.position.z + randomZ) > 58f || (transform.position.z + randomZ) < -15f) { randomZ = 0; }
+        if ((transform.position.x + randomX) > 6f || (transform.position.x + randomX) < -7f) { randomX = 0.5f; }
+        if ((transform.position.z + randomZ) > 10f || (transform.position.z + randomZ) < -10f) { randomZ = 0.5f; }
 
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        if (Random.Range(0, 4) % 2 == 0) { randomChange = randomChange * -1; };
+        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, (transform.position.z + randomZ)* randomChange);
         walkPointSet = true;
 
         if (Physics.Raycast(walkPoint, -transform.up, 8f, whatIsGround))
@@ -74,13 +88,7 @@ public class EnemyAi: MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter(Collider col)
+    private IEnumerator TimerAwake()
     {
-        if (col.gameObject.tag == "Player")
-        {
-
-            //this.transform.localPosition = new Vector3(0f + posX, 0.084f, 0.615f + posZ);
-        }
-
     }
 }
