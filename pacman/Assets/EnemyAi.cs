@@ -1,72 +1,98 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
-public class EnemyAi: MonoBehaviour
+public class EnemyAi : MonoBehaviour
 {
+    //ghosts
     public NavMeshAgent agent;
-    public NavMeshAgent agent2;
-    public NavMeshAgent agent3;
-    public NavMeshAgent agent4;
+    public Transform agent2;
+    public Transform agent3;
+    public Transform agent4;
 
     public Transform player;
     public Transform position;
     public LayerMask whatIsGround;
-    
+
     //Patroling
-    public Vector3 walkPoint;
-    bool walkPointSet = true;
+    Vector3 walkPoint;
+    bool walkPointSet = false;
     public float walkPointRange;
-    public bool awake = false;
+    bool awake = false;
+    public float countdown;
+    float countdownPowerUp = 10;
+    int count = 0;
+
+    Material scared, mio;
+
+    public Text powerUp;
+
     void Start()
     {
-        agent = this.GetComponent<NavMeshAgent>();        
+        agent = this.GetComponent<NavMeshAgent>();
     }
 
     private void Awake()
     {
         player = GameObject.Find("Chomp").transform;
         agent = this.GetComponent<NavMeshAgent>();
-        agent.SetDestination(position.position);
-        walkPointSet = false;
+        string namepath = agent.name.Split(' ')[0];
+        namepath = namepath.Split('_')[0]+namepath.Split('_')[1];
+        Debug.Log(namepath);
+        mio = Resources.Load("Materials/Characters/" + namepath + "_MAT", typeof(Material)) as Material;
+        //white = Resources.Load("Materials/Characters/Ghost_MAT", typeof(Material)) as Material;
+        scared = Resources.Load("Materials/Characters/ScaredGhost_MAT", typeof(Material)) as Material;
     }
 
     private void Update()
     {
-        if(awake) StartCoroutine(TimerAwake());
-        Vector3 distanceToPacman = this.transform.position - player.transform.position;
-
-        if (distanceToPacman.magnitude > 6f)
-        {
-            Patroling();
-            //Debug.Log("Patrol "+ agent.name);
+        if (powerUp.text.Equals("true"))
+        {            
+            StartCoroutine(goAway());
         }
         else
         {
-            ChasePlayer();
-            walkPointSet = false;
-            //Debug.Log("Chase " + agent.name); 
+            if (!awake) { StartCoroutine(TimerAwake()); }
+            else
+            {
+                Vector3 distanceToPacman = this.transform.position - player.position;
+
+                if (distanceToPacman.magnitude > 7f)
+                {
+                    Patroling();
+                    //Debug.Log("Patrol "+ agent.name);
+                }
+                else
+                {
+                    ChasePlayer();
+                    walkPointSet = false;
+                    //Debug.Log("Chase " + agent.name); 
+                }
+            }
         }
     }
 
     private void Patroling()
     {
         if (!walkPointSet) SearchWalkPoint();
-
-        Vector3 distance2 = this.transform.position - agent2.transform.position;
-        Vector3 distance3 = this.transform.position - agent3.transform.position;
-        Vector3 distance4 = this.transform.position - agent4.transform.position;
-
-        if (distance2.magnitude < 1.5f || distance3.magnitude < 1.5f || distance4.magnitude < 1.5f)
+        else
         {
-            SearchWalkPoint();
+            Vector3 distance2 = this.transform.position - agent2.position;
+            Vector3 distance3 = this.transform.position - agent3.position;
+            Vector3 distance4 = this.transform.position - agent4.position;
+
+            if (distance2.magnitude < 0.5f || distance3.magnitude < 0.5f || distance4.magnitude < 0.5f)
+            {
+                SearchWalkPoint();
+            }
+
+            Vector3 distanceToWalkPoint = this.transform.position - walkPoint;
+
+            //Walkpoint reached
+            if (distanceToWalkPoint.magnitude < 1.5f)
+                walkPointSet = false;
         }
-
-        Vector3 distanceToWalkPoint = this.transform.position - walkPoint;
-
-        //Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1.5f)
-            walkPointSet = false;
     }
 
     private void SearchWalkPoint()
@@ -99,15 +125,42 @@ public class EnemyAi: MonoBehaviour
 
     private IEnumerator TimerAwake()
     {
-        awake = false;
-        float countdown = Random.Range(0f, 5f);
-
-        while (countdown > 0)
+        if (countdown <= 0)
         {
-            if(agent.name.Contains("Orange"))
-                Debug.Log("countdown "+agent.name +": "+ countdown);
+            awake = true;
+            agent.SetDestination(position.position);
+        }
+        else
+        {
             countdown -= Time.deltaTime;
         }
         yield return null;
+    }
+
+    public IEnumerator goAway()
+    {
+        if (countdownPowerUp >=0)
+        {
+            agent.SetDestination(player.position * -1);
+            this.GetComponent<Renderer>().material = scared;
+            countdownPowerUp -= Time.deltaTime;
+        }
+        else
+        {
+            this.GetComponent<Renderer>().material = mio;
+            countdownPowerUp = 10;
+            walkPointSet = true;
+            agent.SetDestination(position.position);
+        }
+        yield return null;
+    }
+
+    public void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.tag == "ghost")
+        {
+            SearchWalkPoint();
+        }
+        
     }
 }
