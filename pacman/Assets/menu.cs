@@ -20,7 +20,7 @@ public class menu : MonoBehaviour
 
     void TaskOnClick()
     {
-        SceneManager.LoadScene("Livello");
+        SceneManager.LoadScene("Livello_Player");
     }
 
     void EscOnClick()

@@ -6,69 +6,144 @@ using UnityEngine.UI;
 public class EnemyAi : MonoBehaviour
 {
     //ghosts
-    public NavMeshAgent agent;
+    NavMeshAgent agent;
     public Transform agent2;
     public Transform agent3;
     public Transform agent4;
 
-    public Transform player;
+    Transform player;
     public Transform position;
     public LayerMask whatIsGround;
 
     //Patroling
-    Vector3 walkPoint;
-    bool walkPointSet = false;
+    Vector3 walkPoint, startPoint;
     public float walkPointRange;
-    bool awake = false;
     public float countdown;
-    float countdownPowerUp = 10;
-    int count = 0;
+    bool walkPointSet, awake, reset = false;
+    public bool escape, dead;
+    float app, countdownDeadlock, clock;
 
-    Material scared, mio;
+    int viteAttuali;
+    Material scared, mio, white;
 
-    public Text powerUp;
-
-    void Start()
-    {
-        agent = this.GetComponent<NavMeshAgent>();
-    }
+    public Text powerUp, vite;
 
     private void Awake()
     {
+        //inizializzo valori 
+        clock = 0.0f;
+        app = countdown;
+        viteAttuali = 3;
+        walkPointSet = false;
+        awake = false;
+        escape = true;
+        dead = false;
+        countdownDeadlock = 1;
+        startPoint = this.transform.position;
+        Debug.Log(startPoint);
+
         player = GameObject.Find("Chomp").transform;
         agent = this.GetComponent<NavMeshAgent>();
+
+        //estrapolo i materiali
         string namepath = agent.name.Split(' ')[0];
-        namepath = namepath.Split('_')[0]+namepath.Split('_')[1];
-        Debug.Log(namepath);
+        namepath = namepath.Split('_')[0] + namepath.Split('_')[1];
         mio = Resources.Load("Materials/Characters/" + namepath + "_MAT", typeof(Material)) as Material;
-        //white = Resources.Load("Materials/Characters/Ghost_MAT", typeof(Material)) as Material;
         scared = Resources.Load("Materials/Characters/ScaredGhost_MAT", typeof(Material)) as Material;
+        white = Resources.Load("Materials/Characters/Ghost_MAT", typeof(Material)) as Material;
     }
 
     private void Update()
     {
-        if (powerUp.text.Equals("true"))
-        {            
-            StartCoroutine(goAway());
+        if (reset)
+        {
+            if ((transform.position - startPoint).magnitude < 0.5f)
+            {
+                escape = false;
+                dead = false;
+                awake = false;
+                countdown = app + (8.0f - clock);
+                reset = false;
+                clock = 0f;
+            }
+            else
+            {
+                clock += Time.deltaTime;
+            }
         }
         else
         {
+            //un fantasma ha catturato il pacman?
+            if (int.Parse(vite.text.Split(' ')[3]) != viteAttuali)
+            {
+                reset = true;
+                walkPoint = startPoint;
+                walkPointSet = true;
+                agent.SetDestination(walkPoint);
+                viteAttuali = int.Parse(vite.text.Split(' ')[3]);
+            }
+
+            //il fantasma deve rimanere nello spawn o può iniziare la ricerca?
             if (!awake) { StartCoroutine(TimerAwake()); }
             else
             {
-                Vector3 distanceToPacman = this.transform.position - player.position;
+                //il pacman ha il potere? 
+                if (float.Parse(powerUp.text) != 0.0f)
+                {   //se il ghost è stato mangiato non teme più il pacman ma se questo mangia un'altro power, il ghost è di nuovo in pericolo
+                    if (float.Parse(powerUp.text) >= 9.9f) escape = true;
 
-                if (distanceToPacman.magnitude > 7f)
-                {
-                    Patroling();
-                    //Debug.Log("Patrol "+ agent.name);
+                    //il fantasma deve scappare?
+                    if (escape) StartCoroutine(goAway());
+                    else walk();
                 }
                 else
                 {
-                    ChasePlayer();
-                    walkPointSet = false;
-                    //Debug.Log("Chase " + agent.name); 
+                    walk();
                 }
+            }
+
+            if ((transform.position - player.position).magnitude < 0.8f)
+            {
+                if (float.Parse(powerUp.text) > 0.0f && escape && !dead)
+                {
+                    this.GetComponent<Renderer>().material = white;
+                    agent.speed = 6f;
+                    escape = false;
+                    dead = true;
+                    walkPoint = startPoint;
+                    agent.SetDestination(startPoint);
+                }
+            }
+        }
+    }
+
+    private void walk()
+    {
+
+        if (!dead)
+        {
+            Vector3 distanceToPacman = transform.position - player.position;
+
+            if (distanceToPacman.magnitude >= 7.5f)
+            {
+                Patroling();
+            }
+            else
+            {
+                walkPointSet = false;
+                ChasePlayer();
+            }
+        }
+        else
+        {
+            if ((transform.position - walkPoint).magnitude < 0.5f)
+            {
+                agent.speed = 4f;
+                dead = false;
+                walkPointSet = true;
+                this.GetComponent<Renderer>().material = mio;
+                walkPoint = position.position;
+                agent.SetDestination(walkPoint);
             }
         }
     }
@@ -82,15 +157,15 @@ public class EnemyAi : MonoBehaviour
             Vector3 distance3 = this.transform.position - agent3.position;
             Vector3 distance4 = this.transform.position - agent4.position;
 
-            if (distance2.magnitude < 0.5f || distance3.magnitude < 0.5f || distance4.magnitude < 0.5f)
+            if (distance2.magnitude < 1.25f || distance3.magnitude < 1.25f || distance4.magnitude < 1.25f)
             {
-                SearchWalkPoint();
+                StartCoroutine(deadlock());
             }
 
-            Vector3 distanceToWalkPoint = this.transform.position - walkPoint;
+            Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
             //Walkpoint reached
-            if (distanceToWalkPoint.magnitude < 1.5f)
+            if (distanceToWalkPoint.magnitude < 2f)
                 walkPointSet = false;
         }
     }
@@ -98,18 +173,18 @@ public class EnemyAi : MonoBehaviour
     private void SearchWalkPoint()
     {
         //Calculate random point in range
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
+        float randomZ = Random.Range(-walkPointRange - 4, walkPointRange + 4);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
         float randomChange = 1;
 
-        if ((transform.position.x + randomX) > 6f || (transform.position.x + randomX) < -7f) { randomX = 0.5f; }
-        if ((transform.position.z + randomZ) > 10f || (transform.position.z + randomZ) < -10f) { randomZ = 0.5f; }
+        if ((this.transform.position.x + randomX) > 6f || (this.transform.position.x + randomX) < -7f) { randomX = 0.5f; }
+        if ((this.transform.position.z + randomZ) > 10f || (this.transform.position.z + randomZ) < -10f) { randomZ = 0.5f; }
 
         if (Random.Range(0, 4) % 2 == 0) { randomChange = randomChange * -1; };
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, (transform.position.z + randomZ) * randomChange);
+        walkPoint = new Vector3(this.transform.position.x + randomX, this.transform.position.y, (this.transform.position.z + randomZ) * randomChange);
         walkPointSet = true;
 
-        if (Physics.Raycast(walkPoint, -transform.up, 8f, whatIsGround))
+        if (Physics.Raycast(walkPoint, -this.transform.up, 8f, whatIsGround))
             walkPointSet = true;
 
         agent.SetDestination(walkPoint);
@@ -119,7 +194,7 @@ public class EnemyAi : MonoBehaviour
     {
         if (player != null)
         {
-            agent.SetDestination(player.transform.position);
+            agent.SetDestination(player.position);
         }
     }
 
@@ -128,7 +203,10 @@ public class EnemyAi : MonoBehaviour
         if (countdown <= 0)
         {
             awake = true;
-            agent.SetDestination(position.position);
+            walkPointSet = true;
+
+            walkPoint = position.position;
+            agent.SetDestination(walkPoint);
         }
         else
         {
@@ -137,30 +215,36 @@ public class EnemyAi : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator goAway()
+    private IEnumerator goAway()
     {
-        if (countdownPowerUp >=0)
+        if (float.Parse(powerUp.text) > 0.1f)
         {
             agent.SetDestination(player.position * -1);
             this.GetComponent<Renderer>().material = scared;
-            countdownPowerUp -= Time.deltaTime;
+            agent.speed = 3.5f;
         }
         else
         {
             this.GetComponent<Renderer>().material = mio;
-            countdownPowerUp = 10;
             walkPointSet = true;
             agent.SetDestination(position.position);
         }
         yield return null;
     }
 
-    public void OnTriggerEnter(Collider col)
+    private IEnumerator deadlock()
     {
-        if (col.gameObject.tag == "ghost")
+        if (countdownDeadlock >= 0.0f)
         {
-            SearchWalkPoint();
+            countdownDeadlock -= Time.deltaTime;
         }
-        
+        else
+        {
+            if (walkPoint.x > 0.0f) walkPoint.x *= -1;
+            if (walkPoint.z > 0.0f) walkPoint.z *= -1;
+            agent.SetDestination(walkPoint);
+            countdownDeadlock = 1;
+        }
+        yield return null;
     }
 }

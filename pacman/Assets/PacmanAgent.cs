@@ -18,10 +18,6 @@ public class PacmanAgent : Agent
     private Vector3 startingposition=new Vector3(0.1f, 0.084f, 0.615f);
     
     // Start is called before the first frame update
- 
-
-
-
     public override void Initialize()
     {
         rigidBody = GetComponent<Rigidbody>();
