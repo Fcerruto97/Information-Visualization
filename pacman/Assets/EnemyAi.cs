@@ -30,6 +30,9 @@ public class EnemyAi : MonoBehaviour
 
     private void Awake()
     {
+        player = GameObject.Find("Chomp").transform;
+        agent = this.GetComponent<NavMeshAgent>();
+
         //inizializzo valori 
         clock = 0.0f;
         app = countdown;
@@ -40,10 +43,7 @@ public class EnemyAi : MonoBehaviour
         dead = false;
         countdownDeadlock = 1;
         startPoint = this.transform.position;
-        Debug.Log(startPoint);
-
-        player = GameObject.Find("Chomp").transform;
-        agent = this.GetComponent<NavMeshAgent>();
+        agent.SetDestination(startPoint);     
 
         //estrapolo i materiali
         string namepath = agent.name.Split(' ')[0];

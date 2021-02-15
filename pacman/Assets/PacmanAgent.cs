@@ -17,21 +17,14 @@ public class PacmanAgent : Agent
     public Transform ghost1, ghost2, ghost3, ghost4;
     float countdownPowerUp, countdownReset;
 
-    bool reset = false;
-
-    private Vector3 startingposition = new Vector3(-1f, 0f, 0f), move;
+    bool reset = false;    
     
     // Start is called before the first frame update
     public override void Initialize()
     {
         rigidBody = GetComponent<Rigidbody>();
-
-        //verificare posizione inziale
-        transform.position = startingposition;
         
-        this.rigidBody.angularVelocity = Vector3.zero;
-        this.rigidBody.velocity = Vector3.zero;
-        /*countdownPowerUp = 0f;
+        countdownPowerUp = 0f;
         countdownReset = 7.0f;
         count = 0;
         life = 3;
@@ -41,7 +34,7 @@ public class PacmanAgent : Agent
         rigidBody = GetComponent<Rigidbody>();
         //punteggio.text = "Punteggio  = " + count;
         vite.text = "Vite rimaste = " + life;
-        rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;*/
+        rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
     }
 
@@ -54,16 +47,16 @@ public class PacmanAgent : Agent
     {
         actionsOut[0] = 0;
 
-        /*if (reset) { StartCoroutine(ResetLevel()); }
+        if (reset) { StartCoroutine(ResetLevel()); }
         else
-        {*/
-            //if (power) { StartCoroutine(PowerEat()); }            
+        {
+            if (power) { StartCoroutine(PowerEat()); }            
 
             if (Input.GetKey(KeyCode.UpArrow))
             {
                 actionsOut[0] = 1;               
             }
-            /*if (Input.GetKey(KeyCode.DownArrow))
+            if (Input.GetKey(KeyCode.DownArrow))
             {
                 actionsOut[0] = 2;                
             }
@@ -74,16 +67,19 @@ public class PacmanAgent : Agent
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 actionsOut[0] = 4;               
-            }       */     
-       // }
+            }          
+        }
     }
     
     public override void CollectObservations(VectorSensor sensor)
     {
+        sensor.AddObservation(this.transform.position - ghost1.position);
+        sensor.AddObservation(this.transform.position - ghost2.position);
+        sensor.AddObservation(this.transform.position - ghost3.position);
+        sensor.AddObservation(this.transform.position - ghost4.position);
         //sensor.AddObservation(target.localPosition);
         //sensor.AddObservation(this.transform.localPosition);
-
-       // sensor.AddObservation(this.transform.position);  
+        //sensor.AddObservation(this.transform.position);  
     }
 
     //da modificare
@@ -92,41 +88,36 @@ public class PacmanAgent : Agent
         if(Mathf.FloorToInt(vectorAction[0])==1)
         {
             transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
-            move = Vector3.up;
-            rigidBody.AddForce(move * speed);
+            rigidBody.AddForce(Vector3.up * speed);
         }
 
-       /* if (Mathf.FloorToInt(vectorAction[0]) == 2)
-        {
-            transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
-            move = Vector3.down;
-            rigidBody.AddForce(move * speed);
-        }
+         if (Mathf.FloorToInt(vectorAction[0]) == 2)
+         {
+             transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
+             rigidBody.AddForce(Vector3.down * speed);
+         }
 
-        if (Mathf.FloorToInt(vectorAction[0]) == 3)
-        {
-            transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            move = Vector3.right;
-            rigidBody.AddForce(move * speed);
-        }
+         if (Mathf.FloorToInt(vectorAction[0]) == 3)
+         {
+             transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+             rigidBody.AddForce(Vector3.right * speed);
+         }
 
-        if (Mathf.FloorToInt(vectorAction[0]) == 4)
+         if (Mathf.FloorToInt(vectorAction[0]) == 4)
+         {
+             transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
+             rigidBody.AddForce(Vector3.left * speed);
+         }      
+         
+         
+        if (transform.position.x > 9.4f)
         {
-            transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
-            move = Vector3.left;
-            rigidBody.AddForce(move * speed);
-        }      */  
-
-        //rigidBody.AddForce(move * speed);
-
-        /*if (transform.position.x > 9.4f)
-        {
-            transform.position = new Vector3(-8.5f, 0.084f, 0.69f);
+            transform.position = new Vector3(-8.5f, 0f, 0.69f);
         }
 
         if (transform.position.x < -8.9f)
         {
-            transform.position = new Vector3(9.0f, 0.084f, 0.69f);
+            transform.position = new Vector3(9.0f, 0f, 0.69f);
         }
 
         distance1 = this.transform.position - ghost1.position;
@@ -149,22 +140,21 @@ public class PacmanAgent : Agent
         if (distance4.magnitude < 0.8f)
         {
             Collision(ghost4.GetComponent<EnemyAi>());
-        }*/
+        }
     }
 
     private void FixedUptade()
     {
         //qualcosa da aggiungere sicuro video minuto 8
         //fare qualcosa prima di chiamare il request decision
-        //RequestDecision();
+        RequestDecision();
     }
         
     public void Reset()
     {
         //verificare settaggio paremtri iniziale
-        this.transform.localPosition = new Vector3(-1f, 0f, 0f);
-        this.rigidBody.angularVelocity = Vector3.zero;
-        this.rigidBody.velocity = Vector3.zero;
+        this.transform.position = new Vector3(0f, 0f, -6.5f);
+
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
         count = 0;
