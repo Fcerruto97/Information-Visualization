@@ -10,6 +10,7 @@ TagManager:
   - cerry
   - ghost
   - power
+  - wall
   layers:
   - Default
   - TransparentFX
