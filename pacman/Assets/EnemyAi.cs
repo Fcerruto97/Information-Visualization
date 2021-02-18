@@ -73,16 +73,8 @@ public class EnemyAi : MonoBehaviour
         }
         else
         {
-            //un fantasma ha catturato il pacman?
-            if (int.Parse(vite.text.Split(' ')[3]) != viteAttuali)
-            {
-                reset = true;
-                walkPoint = startPoint;
-                walkPointSet = true;
-                agent.SetDestination(walkPoint);
-                viteAttuali = int.Parse(vite.text.Split(' ')[3]);
-            }
-
+            Preso();
+            if (reset) return;
             //il fantasma deve rimanere nello spawn o può iniziare la ricerca?
             if (!awake) { StartCoroutine(TimerAwake()); }
             else
@@ -106,7 +98,7 @@ public class EnemyAi : MonoBehaviour
             {
                 if (float.Parse(powerUp.text) > 0.5f && escape && !dead)
                 {
-                    this.GetComponent<Renderer>().material = white;
+                    GetComponent<Renderer>().material = white;
                     agent.speed = 6f;
                     escape = false;
                     dead = true;
@@ -114,6 +106,19 @@ public class EnemyAi : MonoBehaviour
                     agent.SetDestination(startPoint);
                 }
             }
+        }
+    }
+
+    private void Preso() {
+        //un fantasma ha catturato il pacman?
+        if (int.Parse(vite.text.Split(' ')[3]) != viteAttuali)
+        {
+            GetComponent<Renderer>().material = mio;
+            reset = true;
+            walkPoint = startPoint;
+            walkPointSet = true;
+            agent.SetDestination(walkPoint);
+            viteAttuali = int.Parse(vite.text.Split(' ')[3]);
         }
     }
 
@@ -141,7 +146,7 @@ public class EnemyAi : MonoBehaviour
                 agent.speed = 4f;
                 dead = false;
                 walkPointSet = true;
-                this.GetComponent<Renderer>().material = mio;
+                GetComponent<Renderer>().material = mio;
                 walkPoint = position.position;
                 agent.SetDestination(walkPoint);
             }
@@ -198,6 +203,14 @@ public class EnemyAi : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.tag == "Player")
+        {
+            Preso();
+        }
+    }
+
     private IEnumerator TimerAwake()
     {
         if (countdown <= 0)
@@ -220,12 +233,12 @@ public class EnemyAi : MonoBehaviour
         if (float.Parse(powerUp.text) > 0.1f)
         {
             agent.SetDestination(player.position * -1);
-            this.GetComponent<Renderer>().material = scared;
+            GetComponent<Renderer>().material = scared;
             agent.speed = 3.5f;
         }
         else
         {
-            this.GetComponent<Renderer>().material = mio;
+            GetComponent<Renderer>().material = mio;
             walkPointSet = true;
             agent.SetDestination(position.position);
         }

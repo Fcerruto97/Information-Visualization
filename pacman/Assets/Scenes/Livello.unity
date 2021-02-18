@@ -106,7 +106,7 @@ NavMeshSettings:
   m_BuildSettings:
     serializedVersion: 2
     agentTypeID: 0
-    agentRadius: 0.35
+    agentRadius: 0.37
     agentHeight: 0.34
     agentSlope: 0
     agentClimb: 0.33
@@ -114,7 +114,7 @@ NavMeshSettings:
     maxJumpAcrossDistance: 0
     minRegionArea: 1
     manualCellSize: 0
-    cellSize: 0.11666667
+    cellSize: 0.123333335
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
@@ -6506,6 +6506,20 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
+--- !u!136 &532761412
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532761408}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.6, z: -0.06}
 --- !u!1001 &536549401
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10417,7 +10431,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 5
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 99
   m_AngularSpeed: 120
@@ -10454,6 +10468,20 @@ MonoBehaviour:
   dead: 0
   powerUp: {fileID: 828423008}
   vite: {fileID: 53839119}
+--- !u!136 &794676816
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 794676812}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.6, z: -0.06}
 --- !u!1001 &797284829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12139,6 +12167,20 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
+--- !u!136 &917596310
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917596306}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.6, z: -0.06}
 --- !u!1001 &920334226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12902,7 +12944,7 @@ MonoBehaviour:
   MaxStep: 0
   vite: {fileID: 53839119}
   powerUp: {fileID: 828423008}
-  speed: 5
+  speed: 3
   ghost1: {fileID: 2134928356}
   ghost2: {fileID: 917596305}
   ghost3: {fileID: 532761407}
@@ -12963,7 +13005,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 15
+    VectorObservationSize: 3
     NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -12979,7 +13021,7 @@ MonoBehaviour:
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
-  m_ObservableAttributeHandling: 0
+  m_ObservableAttributeHandling: 2
 --- !u!114 &949648375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12999,7 +13041,7 @@ MonoBehaviour:
   - power
   - bonus
   - cerry
-  m_RaysPerDirection: 4
+  m_RaysPerDirection: 5
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0.12
   m_RayLength: 20
@@ -13009,8 +13051,8 @@ MonoBehaviour:
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0.07060623, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0.2
-  m_EndVerticalOffset: 0
+  m_StartVerticalOffset: 0.5
+  m_EndVerticalOffset: 0.5
 --- !u!195 &949648376
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -13020,7 +13062,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 949648368}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
+  m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 99
@@ -28002,6 +28044,20 @@ MonoBehaviour:
   dead: 0
   powerUp: {fileID: 828423008}
   vite: {fileID: 53839119}
+--- !u!136 &2134928360
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2134928355}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.4
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.6, z: -0.06}
 --- !u!1001 &2136072625
 PrefabInstance:
   m_ObjectHideFlags: 0
