@@ -142,7 +142,7 @@ public class movimentoPACMAN : MonoBehaviour
             Destroy(col.gameObject);
             count += 100;
             punteggio.text = "Punteggio  = " + count;
-            if (countSfereEat == 0)
+            if (countSfereEat == 1)
             {
                 //SceneManager.LoadScene("Vittoria");
             }

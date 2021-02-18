@@ -31,7 +31,7 @@ public class EnemyAi : MonoBehaviour
     private void Awake()
     {
         player = GameObject.Find("Chomp").transform;
-        agent = this.GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
 
         //inizializzo valori 
         clock = 0.0f;
@@ -42,7 +42,7 @@ public class EnemyAi : MonoBehaviour
         escape = true;
         dead = false;
         countdownDeadlock = 1;
-        startPoint = this.transform.position;
+        startPoint = transform.position;
         agent.SetDestination(startPoint);     
 
         //estrapolo i materiali
@@ -104,7 +104,7 @@ public class EnemyAi : MonoBehaviour
 
             if ((transform.position - player.position).magnitude < 0.8f)
             {
-                if (float.Parse(powerUp.text) > 0.0f && escape && !dead)
+                if (float.Parse(powerUp.text) > 0.5f && escape && !dead)
                 {
                     this.GetComponent<Renderer>().material = white;
                     agent.speed = 6f;
@@ -153,9 +153,9 @@ public class EnemyAi : MonoBehaviour
         if (!walkPointSet) SearchWalkPoint();
         else
         {
-            Vector3 distance2 = this.transform.position - agent2.position;
-            Vector3 distance3 = this.transform.position - agent3.position;
-            Vector3 distance4 = this.transform.position - agent4.position;
+            Vector3 distance2 = transform.position - agent2.position;
+            Vector3 distance3 = transform.position - agent3.position;
+            Vector3 distance4 = transform.position - agent4.position;
 
             if (distance2.magnitude < 1.25f || distance3.magnitude < 1.25f || distance4.magnitude < 1.25f)
             {
@@ -177,14 +177,14 @@ public class EnemyAi : MonoBehaviour
         float randomX = Random.Range(-walkPointRange, walkPointRange);
         float randomChange = 1;
 
-        if ((this.transform.position.x + randomX) > 6f || (this.transform.position.x + randomX) < -7f) { randomX = 0.5f; }
-        if ((this.transform.position.z + randomZ) > 10f || (this.transform.position.z + randomZ) < -10f) { randomZ = 0.5f; }
+        if ((transform.position.x + randomX) > 6f || (transform.position.x + randomX) < -7f) { randomX = 0.5f; }
+        if ((transform.position.z + randomZ) > 10f || (transform.position.z + randomZ) < -10f) { randomZ = 0.5f; }
 
         if (Random.Range(0, 4) % 2 == 0) { randomChange = randomChange * -1; };
-        walkPoint = new Vector3(this.transform.position.x + randomX, this.transform.position.y, (this.transform.position.z + randomZ) * randomChange);
+        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, (transform.position.z + randomZ) * randomChange);
         walkPointSet = true;
 
-        if (Physics.Raycast(walkPoint, -this.transform.up, 8f, whatIsGround))
+        if (Physics.Raycast(walkPoint, -transform.up, 8f, whatIsGround))
             walkPointSet = true;
 
         agent.SetDestination(walkPoint);

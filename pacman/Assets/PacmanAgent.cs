@@ -1,146 +1,179 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.MLAgents.Actuators;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PacmanAgent : Agent
 {
     public Text vite, powerUp;
     public float speed;
     private Rigidbody rigidBody;
-    private static int count;
     bool power = false;
     private static int life, countEat, countSfereEat;
-    private Vector3 distance1, distance2, distance3, distance4;
+    private float distance1, distance2, distance3, distance4;
     public Transform ghost1, ghost2, ghost3, ghost4;
     float countdownPowerUp, countdownReset;
+    bool reset = false;
+    int c = 0;
 
-    bool reset = false;    
-    
     // Start is called before the first frame update
     public override void Initialize()
     {
         rigidBody = GetComponent<Rigidbody>();
-        
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
-        count = 0;
         life = 3;
         power = false;
         countEat = 0;
         countSfereEat = 240;
         rigidBody = GetComponent<Rigidbody>();
-        //punteggio.text = "Punteggio  = " + count;
         vite.text = "Vite rimaste = " + life;
-        rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
-
     }
 
-    public override void OnEpisodeBegin()
-    {
-       Reset(); //da aggiustare
+    public override void OnEpisodeBegin(){     
+        Reset();
     }
 
-    public override void Heuristic(float[] actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
-        actionsOut[0] = 0;
-
-        if (reset) { StartCoroutine(ResetLevel()); }
-        else
+        var discreteActionsOut = actionsOut.DiscreteActions;
+        discreteActionsOut.Clear();
+        //forward
+        if (Input.GetKey(KeyCode.W))
         {
-            if (power) { StartCoroutine(PowerEat()); }            
-
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                actionsOut[0] = 1;               
-            }
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                actionsOut[0] = 2;                
-            }
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                actionsOut[0] = 3;                
-            }
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                actionsOut[0] = 4;               
-            }          
+            discreteActionsOut[0] = 1;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[0] = 2;
+        }
+        //right
+        if (Input.GetKey(KeyCode.A))
+        {
+            discreteActionsOut[1] = 1;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            discreteActionsOut[1] = 2;
+        }
+        //rotate
+        if (Input.GetKey(KeyCode.E))
+        {
+            discreteActionsOut[2] = 1;
+        }
+        if (Input.GetKey(KeyCode.Q))
+        {
+            discreteActionsOut[2] = 2;
         }
     }
     
     public override void CollectObservations(VectorSensor sensor)
-    {
-        sensor.AddObservation(this.transform.position - ghost1.position);
-        sensor.AddObservation(this.transform.position - ghost2.position);
-        sensor.AddObservation(this.transform.position - ghost3.position);
-        sensor.AddObservation(this.transform.position - ghost4.position);
-        //sensor.AddObservation(target.localPosition);
-        //sensor.AddObservation(this.transform.localPosition);
-        //sensor.AddObservation(this.transform.position);  
+    {        
+        /*sensor.AddObservation(distance1);
+        sensor.AddObservation(distance2);
+        sensor.AddObservation(distance3);
+        sensor.AddObservation(distance4);*/
+
+        sensor.AddObservation(ghost1.localPosition);
+        sensor.AddObservation(ghost2.localPosition);
+        sensor.AddObservation(ghost3.localPosition);
+        sensor.AddObservation(ghost4.localPosition);
+                
+        sensor.AddObservation(transform.InverseTransformDirection(rigidBody.velocity));
     }
 
     //da modificare
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        if(Mathf.FloorToInt(vectorAction[0])==1)
+        if (reset) { StartCoroutine(ResetLevel()); }
+        else
         {
-            transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
-            rigidBody.AddForce(Vector3.up * speed);
+            if (power) { StartCoroutine(PowerEat()); }
+
+            MoveAgent(actionBuffers.DiscreteActions);
+
+            if (transform.position.x > 9.4f)
+            {
+                transform.position = new Vector3(-8.5f, 0f, 0.69f);
+            }
+
+            if (transform.position.x < -8.9f)
+            {
+                transform.position = new Vector3(9.0f, 0f, 0.69f);
+            }
+
+            distance1 = Vector3.Distance(transform.position, ghost1.position);
+            distance2 = Vector3.Distance(transform.position, ghost2.position);
+            distance3 = Vector3.Distance(transform.position, ghost3.position);
+            distance4 = Vector3.Distance(transform.position, ghost4.position);
+
+            //Debug.Log("distance= " + distance1 + " " + distance2 + " " + distance3 + " " + distance4);
+
+            if (distance1 < 1f)
+            {
+                Collision(ghost1.GetComponent<EnemyAi>());
+            }
+            if (distance2 < 1f)
+            {
+                Collision(ghost2.GetComponent<EnemyAi>());
+            }
+            if (distance3 < 1f)
+            {
+                Collision(ghost3.GetComponent<EnemyAi>());
+            }
+            if (distance4 < 1f)
+            {
+                Collision(ghost4.GetComponent<EnemyAi>());
+            }
+        }
+    }
+
+    public void MoveAgent(ActionSegment<int> act)
+    {
+        AddReward(-0.0001f);
+        
+        var dirToGo = Vector3.zero;
+        var rotateDir = Vector3.zero;
+        
+        var forwardAxis = act[0];
+        var rightAxis = act[1];
+        var rotateAxis = act[2];
+
+        switch (forwardAxis)
+        {
+            case 1:
+                dirToGo = transform.forward * speed;
+                break;
+            case 2:
+                dirToGo = transform.forward * -speed;
+                break;
         }
 
-         if (Mathf.FloorToInt(vectorAction[0]) == 2)
-         {
-             transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
-             rigidBody.AddForce(Vector3.down * speed);
-         }
-
-         if (Mathf.FloorToInt(vectorAction[0]) == 3)
-         {
-             transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-             rigidBody.AddForce(Vector3.right * speed);
-         }
-
-         if (Mathf.FloorToInt(vectorAction[0]) == 4)
-         {
-             transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
-             rigidBody.AddForce(Vector3.left * speed);
-         }      
-         
-         
-        if (transform.position.x > 9.4f)
+        switch (rightAxis)
         {
-            transform.position = new Vector3(-8.5f, 0f, 0.69f);
+            case 1:
+                dirToGo = transform.right * speed;
+                break;
+            case 2:
+                dirToGo = transform.right * -speed;
+                break;
         }
 
-        if (transform.position.x < -8.9f)
+        switch (rotateAxis)
         {
-            transform.position = new Vector3(9.0f, 0f, 0.69f);
+            case 1:
+                rotateDir = transform.up * -1f;
+                break;
+            case 2:
+                rotateDir = transform.up * 1f;
+                break;
         }
 
-        distance1 = this.transform.position - ghost1.position;
-        distance2 = this.transform.position - ghost2.position;
-        distance3 = this.transform.position - ghost3.position;
-        distance4 = this.transform.position - ghost4.position;
-
-        if (distance1.magnitude < 0.8f)
-        {
-            Collision(ghost1.GetComponent<EnemyAi>());
-        }
-        if (distance2.magnitude < 0.8f)
-        {
-            Collision(ghost2.GetComponent<EnemyAi>());
-        }
-        if (distance3.magnitude < 0.8f)
-        {
-            Collision(ghost3.GetComponent<EnemyAi>());
-        }
-        if (distance4.magnitude < 0.8f)
-        {
-            Collision(ghost4.GetComponent<EnemyAi>());
-        }
+        transform.Rotate(rotateDir, Time.deltaTime * 200f);
+        rigidBody.AddForce(dirToGo * speed, ForceMode.VelocityChange);
     }
 
     private void FixedUptade()
@@ -149,89 +182,96 @@ public class PacmanAgent : Agent
         //fare qualcosa prima di chiamare il request decision
         RequestDecision();
     }
-        
-    public void Reset()
-    {
-        //verificare settaggio paremtri iniziale
-        this.transform.position = new Vector3(0f, 0f, -6.5f);
 
+    private void Reset()
+    {
+        //verificare settaggio parametri iniziale
+        transform.position = new Vector3(0f, 0f, -6.5f);
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
-        count = 0;
         life = 3;
         power = false;
         countEat = 0;
         countSfereEat = 240;
         rigidBody = GetComponent<Rigidbody>();
-        //punteggio.text = "Punteggio  = " + count;
         vite.text = "Vite rimaste = " + life;
-        rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+        if (c == 0) { c++; }
+        else {
+            SceneManager.LoadScene("Livello");
+            Debug.Log("Nuova scena cumulative rewards = ");
+            GetCumulativeReward();
+        };
     }
-    
+
     // aggiustare tutti i reward
-    public void OnTriggerEnter(Collider col)
+    void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "bonus")
         {
-            if (col.gameObject.tag == "bonus")
+            AddReward(0.03f);
+            Debug.Log(GetCumulativeReward());
+            Destroy(col.gameObject);
+            if (countSfereEat == 1)
             {
-                Destroy(col.gameObject);
-                count += 100;
-                //punteggio.text = "Punteggio  = " + count;
-                if (countSfereEat == 0)
-                {
-                    AddReward(2f);
-                }
-                else { countSfereEat--; }
+                AddReward(1f);
+                Debug.Log("Vittoria = ");
+                Debug.Log(GetCumulativeReward());
+                EndEpisode();
             }
+            else {
+                countSfereEat--;
+            }
+        }
 
-            if (col.gameObject.tag == "cerry")
-            {
-                Destroy(col.gameObject);
-                count += 1000;
-                //punteggio.text = "Punteggio  = " + count;
-            }
+        if (col.gameObject.tag == "cerry")
+        {
+            AddReward(0.2f);
+            Debug.Log(GetCumulativeReward());
+            Destroy(col.gameObject);
+        }
 
-            if (col.gameObject.tag == "power")
-            {
-                Debug.Log("trigger");
-                Destroy(col.gameObject);
-                power = true;
-                countEat = 0;
-                countdownPowerUp += 10;
-            }
+        if (col.gameObject.tag == "power")
+        {
+            AddReward(0.1f);
+            Debug.Log(GetCumulativeReward());            
+            Destroy(col.gameObject);
+            power = true;
+            Debug.Log("power ="+ power);
+            countEat = 0;
+            countdownPowerUp += 10;
         }
     }
 
-    public void gameOver()
+    private void gameOver()
     {
         life--;
         if (life > 0)
         {
-            AddReward(-0.3f);
+            AddReward(-0.5f);
             Debug.Log(GetCumulativeReward());
+            Debug.Log("Catturato");
             vite.text = "Vite rimaste = " + life;
-            this.transform.position = new Vector3(0f, 0f, -20.5f);
+            transform.position = new Vector3(0f, 0f, -50.5f);
             reset = true;
         }
         else
         {
+            AddReward(-1f);
             Debug.Log("Perso");
-            AddReward(-1.01f);
+            Debug.Log(GetCumulativeReward());            
             EndEpisode();
-            Debug.Log(GetCumulativeReward());
-        }        
+        }
     }
-    
+
     private void Collision(EnemyAi ghost)
     {
         if (!ghost.GetComponent<EnemyAi>().dead)
         {
             if (power && ghost.GetComponent<EnemyAi>().escape)
             {
+                AddReward(0.3f);
+                Debug.Log(GetCumulativeReward());
                 countEat++;
-                count += countEat * 200;
-                //punteggio.text = "Punteggio  = " + count;
             }
             else
             {
