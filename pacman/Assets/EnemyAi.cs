@@ -22,7 +22,7 @@ public class EnemyAi : MonoBehaviour
     bool walkPointSet, awake, reset = false;
     public bool escape, dead;
     float app, countdownDeadlock, clock;
-
+    public string namePlayer;
     int viteAttuali;
     Material scared, mio, white;
 
@@ -30,7 +30,7 @@ public class EnemyAi : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("Chomp").transform;
+        player = GameObject.Find(namePlayer).transform;
         agent = GetComponent<NavMeshAgent>();
 
         //inizializzo valori 

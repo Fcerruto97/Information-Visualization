@@ -9,19 +9,22 @@ using UnityEngine.SceneManagement;
 public class PacmanAgent : Agent
 {
     public Text vite, powerUp;
-    public float speed;
+    public float speed, dist;
     private Rigidbody rigidBody;
     bool power = false;
     private static int life, countEat, countSfereEat;
-    private float distance1, distance2, distance3, distance4;
-    public Transform ghost1, ghost2, ghost3, ghost4;
+    //private float distance1, distance2, distance3, distance4;
     float countdownPowerUp, countdownReset;
     bool reset = false;
     int c = 0;
+    Vector3 startPosition;
 
     // Start is called before the first frame update
     public override void Initialize()
     {
+        //Chiamerei DontDestroyOnLoad per questo GameObject.
+        //DontDestroyOnLoad(gameObject);
+        startPosition = transform.position;
         rigidBody = GetComponent<Rigidbody>();
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
@@ -33,9 +36,10 @@ public class PacmanAgent : Agent
     }
 
     public override void OnEpisodeBegin(){
+        Debug.Log("New Game ");    
         Reset();
     }
-
+    
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
@@ -71,18 +75,8 @@ public class PacmanAgent : Agent
     }
     
     public override void CollectObservations(VectorSensor sensor)
-    {        
-        /*sensor.AddObservation(distance1);
-        sensor.AddObservation(distance2);
-        sensor.AddObservation(distance3);
-        sensor.AddObservation(distance4);*/
-
-        /*sensor.AddObservation(ghost1.localPosition);
-        sensor.AddObservation(ghost2.localPosition);
-        sensor.AddObservation(ghost3.localPosition);
-        sensor.AddObservation(ghost4.localPosition);*/
-                
-        sensor.AddObservation(transform.InverseTransformDirection(rigidBody.velocity));
+    {
+        sensor.AddObservation(transform.position);
     }
 
     //da modificare
@@ -95,46 +89,46 @@ public class PacmanAgent : Agent
 
             MoveAgent(actionBuffers.DiscreteActions);
 
-            if (transform.position.x > 9.4f)
+            if (transform.position.x > 9.4f + dist)
             {
-                transform.position = new Vector3(-8.5f, 0f, 0.69f);
+                transform.position = new Vector3(-8.5f+ + dist, 0f, 0.4f);
             }
 
-            if (transform.position.x < -8.9f)
+            if (transform.position.x < -8.9f + dist)
             {
-                transform.position = new Vector3(9.0f, 0f, 0.69f);
+                transform.position = new Vector3(9.0f+ + dist, 0f, 0.4f);
             }
 
-            /*distance1 = Vector3.Distance(transform.position, ghost1.position);
-            distance2 = Vector3.Distance(transform.position, ghost2.position);
-            distance3 = Vector3.Distance(transform.position, ghost3.position);
-            distance4 = Vector3.Distance(transform.position, ghost4.position);
+            {
+                /*distance1 = Vector3.Distance(transform.position, ghost1.position);
+                distance2 = Vector3.Distance(transform.position, ghost2.position);
+                distance3 = Vector3.Distance(transform.position, ghost3.position);
+                distance4 = Vector3.Distance(transform.position, ghost4.position);
 
-            Debug.Log("distance= " + distance1 + " " + distance2 + " " + distance3 + " " + distance4);*/
+                Debug.Log("distance= " + distance1 + " " + distance2 + " " + distance3 + " " + distance4);*/
 
-            /*if (distance1 < 1f)
-            {
-                Collision(ghost1.GetComponent<EnemyAi>());
+                /*if (distance1 < 1f)
+                {
+                    Collision(ghost1.GetComponent<EnemyAi>());
+                }
+                if (distance2 < 1f)
+                {
+                    Collision(ghost2.GetComponent<EnemyAi>());
+                }
+                if (distance3 < 1f)
+                {
+                    Collision(ghost3.GetComponent<EnemyAi>());
+                }
+                if (distance4 < 1f)
+                {
+                    Collision(ghost4.GetComponent<EnemyAi>());
+                }*/
             }
-            if (distance2 < 1f)
-            {
-                Collision(ghost2.GetComponent<EnemyAi>());
-            }
-            if (distance3 < 1f)
-            {
-                Collision(ghost3.GetComponent<EnemyAi>());
-            }
-            if (distance4 < 1f)
-            {
-                Collision(ghost4.GetComponent<EnemyAi>());
-            }*/
         }
     }
 
     public void MoveAgent(ActionSegment<int> act)
-    {
-        AddReward(-0.0001f);
-        
+    {        
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
         
@@ -186,7 +180,7 @@ public class PacmanAgent : Agent
     private void Reset()
     {
         //verificare settaggio parametri iniziale
-        transform.position = new Vector3(0f, 0f, -6.5f);
+        transform.position = startPosition;
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
         life = 3;
@@ -198,7 +192,7 @@ public class PacmanAgent : Agent
         if (c == 0) { c++; }
         else {
             SceneManager.LoadScene("Livello");
-            Debug.Log("Nuova scena cumulative rewards = "+ GetCumulativeReward());            
+            c = 0;
         };
     }
 
@@ -207,13 +201,14 @@ public class PacmanAgent : Agent
     {
         if (col.gameObject.tag == "bonus")
         {
-            AddReward(0.03f);
+            AddReward(0.005f);
             //Debug.Log(GetCumulativeReward());
             Destroy(col.gameObject);
             if (countSfereEat == 1)
             {
                 AddReward(1f);
-                Debug.Log("Vittoria = "+GetCumulativeReward());
+                //Debug.Log("Vittoria");
+                Debug.Log("VITTORIA EndEpisode = " + GetCumulativeReward());
                 EndEpisode();
             }
             else {
@@ -231,13 +226,12 @@ public class PacmanAgent : Agent
         if (col.gameObject.tag == "ghost")
         {
             Collision(col.GetComponent<EnemyAi>());
-            Debug.Log("Beccato"); 
         }
 
         if (col.gameObject.tag == "power")
         {
             AddReward(0.1f);
-            Debug.Log(GetCumulativeReward());            
+            //Debug.Log(GetCumulativeReward());            
             Destroy(col.gameObject);
             power = true;
             countEat = 0;
@@ -250,16 +244,17 @@ public class PacmanAgent : Agent
         life--;
         if (life > 0)
         {
-            AddReward(-0.5f);
+            AddReward(-0.75f);
             //Debug.Log(GetCumulativeReward());
             vite.text = "Vite rimaste = " + life;
-            transform.position = new Vector3(0f, 0f, -6.5f);
+            transform.position = startPosition;
             reset = true;
         }
         else
         {
             AddReward(-1f);
-            Debug.Log("Perso = "+GetCumulativeReward());
+            //Debug.Log("Perso");
+            Debug.Log("SCONFITTA EndEpisode = "+GetCumulativeReward());
             EndEpisode();
         }
     }
@@ -306,7 +301,6 @@ public class PacmanAgent : Agent
         {
             reset = false;
             countdownReset = 7.0f;
-            this.transform.position = new Vector3(0f, 0f, -6.5f);
         }
         yield return null;
     }
