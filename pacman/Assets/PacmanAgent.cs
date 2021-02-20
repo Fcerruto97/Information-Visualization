@@ -4,7 +4,6 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class PacmanAgent : Agent
 {
@@ -13,17 +12,14 @@ public class PacmanAgent : Agent
     private Rigidbody rigidBody;
     bool power = false;
     private int life, countEat, countSfereEat;
-    //private float distance1, distance2, distance3, distance4;
     float countdownPowerUp, countdownReset;
     bool reset = false;
-    int c = 0;
     Vector3 startPosition;
+    public GameObject gruppo;
 
     // Start is called before the first frame update
     public override void Initialize()
     {
-        //Chiamerei DontDestroyOnLoad per questo GameObject.
-        //DontDestroyOnLoad(gameObject);
         startPosition = transform.position;
         rigidBody = GetComponent<Rigidbody>();
         countdownPowerUp = 0f;
@@ -97,13 +93,14 @@ public class PacmanAgent : Agent
     }
 
     public void MoveAgent(ActionSegment<int> act)
-    {        
-        var dirToGo = Vector3.zero;
-        
+    {
+
+        AddReward(-0.001f);
+
+        var dirToGo = Vector3.zero;        
         var forwardAxis = act[0];
         var rightAxis = act[1];
         var rotatAxis = act[2];
-
         int rotateDir = 1;
        
         switch (forwardAxis)
@@ -160,16 +157,17 @@ public class PacmanAgent : Agent
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
         life = 3;
+        reset = true;
         power = false;
         countEat = 0;
         countSfereEat = 240;
         rigidBody = GetComponent<Rigidbody>();
         vite.text = "Vite rimaste = " + life;
-        if (c == 0) { c++; }
-        else {
-            SceneManager.LoadScene("Livello");
-            c = 0;
-        };
+    
+        Component[] insiemeSfere = gruppo.GetComponentsInChildren<Transform>(true);
+        foreach (var sfera in insiemeSfere) {
+            sfera.gameObject.SetActive(true);
+        }
     }
 
     // aggiustare tutti i reward
@@ -177,12 +175,12 @@ public class PacmanAgent : Agent
     {
         if (col.gameObject.tag == "bonus")
         {
-            AddReward(0.005f);
+            AddReward(0.02f);
             //Debug.Log(GetCumulativeReward());
-            Destroy(col.gameObject);
+            col.gameObject.SetActive(false);
             if (countSfereEat == 1)
             {
-                AddReward(1f);
+                AddReward(3f);
                 //Debug.Log("Vittoria");
                 Debug.Log("VITTORIA EndEpisode = " + /*GetCumulativeReward());+*/ " " + this.name);
                 EndEpisode();
@@ -194,7 +192,7 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "cerry")
         {
-            AddReward(0.2f);
+            AddReward(0.001f);
             //Debug.Log(GetCumulativeReward());
             Destroy(col.gameObject);
         }
@@ -206,11 +204,12 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "power")
         {
-            AddReward(0.1f);
+            AddReward(0.0025f);
             //Debug.Log(GetCumulativeReward());            
             Destroy(col.gameObject);
             power = true;
             countEat = 0;
+            RequestDecision();
             countdownPowerUp += 10;
         }
     }
@@ -221,7 +220,7 @@ public class PacmanAgent : Agent
         Debug.Log(life + " " + this.name);
         if (life > 0)
         {
-            AddReward(-0.75f);
+            AddReward(-1f);
             //Debug.Log(GetCumulativeReward());
             vite.text = "Vite rimaste = " + life;
             transform.position = startPosition;
@@ -229,7 +228,7 @@ public class PacmanAgent : Agent
         }
         else
         {
-            AddReward(-1f);
+            AddReward(-1.5f);
             //Debug.Log("Perso");
             Debug.Log("SCONFITTA EndEpisode = "/*+GetCumulativeReward() */+ " " + this.name);
             EndEpisode();

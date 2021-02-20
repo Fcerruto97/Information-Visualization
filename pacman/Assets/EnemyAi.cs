@@ -37,12 +37,13 @@ public class EnemyAi : MonoBehaviour
         clock = 0.0f;
         app = countdown;
         viteAttuali = 3;
-        walkPointSet = false;
+        walkPointSet = true;
         awake = false;
         escape = true;
         dead = false;
         countdownDeadlock = 1;
         startPoint = transform.position;
+        walkPoint = startPoint;
         agent.SetDestination(startPoint);     
 
         //estrapolo i materiali
@@ -55,11 +56,12 @@ public class EnemyAi : MonoBehaviour
 
     private void Update()
     {
+        //devo resettare la posizione
         if (reset)
         {
+            //sono arrivato al punto di spawn?
             if ((transform.position - startPoint).magnitude < 0.5f)
             {
-                escape = false;
                 dead = false;
                 awake = false;
                 countdown = app + (8.0f - clock);
@@ -102,6 +104,7 @@ public class EnemyAi : MonoBehaviour
                     agent.speed = 6f;
                     escape = false;
                     dead = true;
+                    walkPointSet = true;
                     walkPoint = startPoint;
                     agent.SetDestination(startPoint);
                 }
@@ -117,14 +120,13 @@ public class EnemyAi : MonoBehaviour
             reset = true;
             walkPoint = startPoint;
             walkPointSet = true;
-            agent.SetDestination(walkPoint);
+            agent.SetDestination(walkPoint); 
             viteAttuali = int.Parse(vite.text.Split(' ')[3]);
         }
     }
 
     private void walk()
     {
-
         if (!dead)
         {
             Vector3 distanceToPacman = transform.position - player.position;
@@ -170,7 +172,7 @@ public class EnemyAi : MonoBehaviour
             Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
             //Walkpoint reached
-            if (distanceToWalkPoint.magnitude < 2f)
+            if (distanceToWalkPoint.magnitude < 1f)
                 walkPointSet = false;
         }
     }
@@ -217,7 +219,6 @@ public class EnemyAi : MonoBehaviour
         {
             awake = true;
             walkPointSet = true;
-
             walkPoint = position.position;
             agent.SetDestination(walkPoint);
         }
@@ -232,7 +233,8 @@ public class EnemyAi : MonoBehaviour
     {
         if (float.Parse(powerUp.text) > 0.1f)
         {
-            agent.SetDestination(player.position * -1);
+            walkPoint = player.position * -1;
+            agent.SetDestination(walkPoint);
             GetComponent<Renderer>().material = scared;
             agent.speed = 3.5f;
         }
@@ -240,7 +242,8 @@ public class EnemyAi : MonoBehaviour
         {
             GetComponent<Renderer>().material = mio;
             walkPointSet = true;
-            agent.SetDestination(position.position);
+            walkPoint = position.position;
+            agent.SetDestination(walkPoint);
         }
         yield return null;
     }
@@ -255,6 +258,7 @@ public class EnemyAi : MonoBehaviour
         {
             if (walkPoint.x > 0.0f) walkPoint.x *= -1;
             if (walkPoint.z > 0.0f) walkPoint.z *= -1;
+            walkPointSet = true;
             agent.SetDestination(walkPoint);
             countdownDeadlock = 1;
         }

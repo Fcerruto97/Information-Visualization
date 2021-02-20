@@ -125,6 +125,7 @@ public class movimentoPACMAN : MonoBehaviour
             vite.text = "Vite rimaste = " + life;
             this.transform.position = new Vector3(0f, 0f, -20.5f);
             reset = true;
+            countdownPowerUp = 0f;
         }
         else
         {
@@ -144,7 +145,7 @@ public class movimentoPACMAN : MonoBehaviour
             punteggio.text = "Punteggio  = " + count;
             if (countSfereEat == 1)
             {
-                //SceneManager.LoadScene("Vittoria");
+                SceneManager.LoadScene("Vittoria");
             }
             else { countSfereEat--; }
         }

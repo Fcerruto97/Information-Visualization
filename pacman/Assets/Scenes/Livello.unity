@@ -25398,6 +25398,7 @@ MonoBehaviour:
   powerUp: {fileID: 828423008}
   speed: 2
   dist: 0
+  gruppo: {fileID: 1264071637}
 --- !u!135 &949648370
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -34906,6 +34907,7 @@ MonoBehaviour:
   powerUp: {fileID: 657853430}
   speed: 2
   dist: 29.4
+  gruppo: {fileID: 292963252}
 --- !u!135 &1322888388
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -37393,7 +37395,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 2.6053e-41, z: 0, w: 2.734375}
+  m_BoundingSphereOverride: {x: 0, y: 1.8e-44, z: 3.1895e-41, w: 5.9e-44}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -48027,7 +48029,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1894194325
 Transform:
   m_ObjectHideFlags: 0
