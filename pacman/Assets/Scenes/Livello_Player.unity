@@ -7125,7 +7125,7 @@ MonoBehaviour:
   punteggio: {fileID: 1394215428}
   vite: {fileID: 1478562203}
   powerUp: {fileID: 323463831}
-  speed: 12
+  speed: 6
   ghost1: {fileID: 1713660186}
   ghost2: {fileID: 1492191027}
   ghost3: {fileID: 1210341321}

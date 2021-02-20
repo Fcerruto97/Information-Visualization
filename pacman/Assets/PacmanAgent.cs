@@ -217,7 +217,6 @@ public class PacmanAgent : Agent
     private void gameOver()
     {
         life--;
-        Debug.Log(life + " " + this.name);
         if (life > 0)
         {
             AddReward(-1f);
