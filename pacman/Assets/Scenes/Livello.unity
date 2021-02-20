@@ -25394,7 +25394,7 @@ MonoBehaviour:
   MaxStep: 100000
   vite: {fileID: 53839119}
   powerUp: {fileID: 828423008}
-  speed: 4
+  speed: 2
   dist: 0
 --- !u!135 &949648370
 SphereCollider:
@@ -34901,7 +34901,7 @@ MonoBehaviour:
   MaxStep: 100000
   vite: {fileID: 1089678052}
   powerUp: {fileID: 657853430}
-  speed: 4
+  speed: 2
   dist: 29.4
 --- !u!135 &1322888388
 SphereCollider:
