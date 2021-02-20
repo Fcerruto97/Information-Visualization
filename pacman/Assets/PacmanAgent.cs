@@ -12,7 +12,7 @@ public class PacmanAgent : Agent
     public float speed, dist;
     private Rigidbody rigidBody;
     bool power = false;
-    private static int life, countEat, countSfereEat;
+    private int life, countEat, countSfereEat;
     //private float distance1, distance2, distance3, distance4;
     float countdownPowerUp, countdownReset;
     bool reset = false;
@@ -36,7 +36,7 @@ public class PacmanAgent : Agent
     }
 
     public override void OnEpisodeBegin(){
-        Debug.Log("New Game ");    
+        Debug.Log("New Game");    
         Reset();
     }
     
@@ -49,28 +49,23 @@ public class PacmanAgent : Agent
         if (Input.GetKey(KeyCode.W))
         {
             discreteActionsOut[0] = 1;
+            discreteActionsOut[2] = 1;
         }
         if (Input.GetKey(KeyCode.S))
         {
             discreteActionsOut[0] = 2;
+            discreteActionsOut[2] = 2;
         }
         //right
         if (Input.GetKey(KeyCode.A))
         {
             discreteActionsOut[1] = 1;
+            discreteActionsOut[2] = 3;
         }
         if (Input.GetKey(KeyCode.D))
         {
             discreteActionsOut[1] = 2;
-        }
-        //rotate
-        if (Input.GetKey(KeyCode.E))
-        {
-            discreteActionsOut[2] = 1;
-        }
-        if (Input.GetKey(KeyCode.Q))
-        {
-            discreteActionsOut[2] = 2;
+            discreteActionsOut[2] = 4;
         }
     }
     
@@ -97,45 +92,20 @@ public class PacmanAgent : Agent
             if (transform.position.x < -8.9f + dist)
             {
                 transform.position = new Vector3(9.0f+ + dist, 0f, 0.4f);
-            }
-
-            {
-                /*distance1 = Vector3.Distance(transform.position, ghost1.position);
-                distance2 = Vector3.Distance(transform.position, ghost2.position);
-                distance3 = Vector3.Distance(transform.position, ghost3.position);
-                distance4 = Vector3.Distance(transform.position, ghost4.position);
-
-                Debug.Log("distance= " + distance1 + " " + distance2 + " " + distance3 + " " + distance4);*/
-
-                /*if (distance1 < 1f)
-                {
-                    Collision(ghost1.GetComponent<EnemyAi>());
-                }
-                if (distance2 < 1f)
-                {
-                    Collision(ghost2.GetComponent<EnemyAi>());
-                }
-                if (distance3 < 1f)
-                {
-                    Collision(ghost3.GetComponent<EnemyAi>());
-                }
-                if (distance4 < 1f)
-                {
-                    Collision(ghost4.GetComponent<EnemyAi>());
-                }*/
-            }
+            }            
         }
     }
 
     public void MoveAgent(ActionSegment<int> act)
     {        
         var dirToGo = Vector3.zero;
-        var rotateDir = Vector3.zero;
         
         var forwardAxis = act[0];
         var rightAxis = act[1];
-        var rotateAxis = act[2];
+        var rotatAxis = act[2];
 
+        int rotateDir = 1;
+       
         switch (forwardAxis)
         {
             case 1:
@@ -156,18 +126,24 @@ public class PacmanAgent : Agent
                 break;
         }
 
-        switch (rotateAxis)
+        switch (rotatAxis)
         {
             case 1:
-                rotateDir = transform.up * -1f;
+                rotateDir = 0;
                 break;
             case 2:
-                rotateDir = transform.up * 1f;
+                rotateDir = 180;
+                break;
+            case 3:
+                rotateDir = -90;
+                break;
+            case 4:
+                rotateDir = 90;
                 break;
         }
-
-        transform.Rotate(rotateDir, Time.deltaTime * 200f);
-        rigidBody.AddForce(dirToGo * speed, ForceMode.VelocityChange);
+        
+        transform.rotation = Quaternion.AngleAxis(rotateDir, Vector3.up);
+        rigidBody.AddForce(dirToGo, ForceMode.VelocityChange);
     }
 
     private void FixedUptade()
@@ -208,7 +184,7 @@ public class PacmanAgent : Agent
             {
                 AddReward(1f);
                 //Debug.Log("Vittoria");
-                Debug.Log("VITTORIA EndEpisode = " + GetCumulativeReward());
+                Debug.Log("VITTORIA EndEpisode = " + /*GetCumulativeReward());+*/ " " + this.name);
                 EndEpisode();
             }
             else {
@@ -242,6 +218,7 @@ public class PacmanAgent : Agent
     private void gameOver()
     {
         life--;
+        Debug.Log(life + " " + this.name);
         if (life > 0)
         {
             AddReward(-0.75f);
@@ -254,7 +231,7 @@ public class PacmanAgent : Agent
         {
             AddReward(-1f);
             //Debug.Log("Perso");
-            Debug.Log("SCONFITTA EndEpisode = "+GetCumulativeReward());
+            Debug.Log("SCONFITTA EndEpisode = "/*+GetCumulativeReward() */+ " " + this.name);
             EndEpisode();
         }
     }
