@@ -65,6 +65,11 @@ public class PacmanAgent : Agent
         }
     }
 
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(transform.position);        
+    }
+
     //da modificare
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -75,12 +80,12 @@ public class PacmanAgent : Agent
 
             MoveAgent(actionBuffers.DiscreteActions);
 
-            if (transform.position.x > 9.4f + dist)
+            if (transform.position.x > 9.4f + dist && transform.position.z > 0.5)
             {
                 transform.position = new Vector3(-8.5f + dist, 0f, 0.5f);
             }
 
-            if (transform.position.x < -8.9f + dist)
+            if (transform.position.x < -8.9f + dist && transform.position.z > 0.5)
             {
                 transform.position = new Vector3(9.0f + dist, 0f, 0.5f);
             }            
@@ -90,7 +95,7 @@ public class PacmanAgent : Agent
     public void MoveAgent(ActionSegment<int> act)
     {
 
-        AddReward(-0.001f);
+        AddReward(-0.000001f);
 
         var dirToGo = Vector3.zero;        
         var forwardAxis = act[0];
@@ -170,12 +175,12 @@ public class PacmanAgent : Agent
     {
         if (col.gameObject.tag == "bonus")
         {
-            AddReward(0.02f);
+            AddReward(0.015f);
             //Debug.Log(GetCumulativeReward());
             col.gameObject.SetActive(false);
             if (countSfereEat == 1)
             {
-                AddReward(3f);
+                AddReward(5f);
                 //Debug.Log("Vittoria");
                 Debug.Log("VITTORIA EndEpisode = " + /*GetCumulativeReward());+*/ " " + this.name);
                 EndEpisode();
@@ -187,7 +192,7 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "cerry")
         {
-            AddReward(0.001f);
+            AddReward(0.01f);
             //Debug.Log(GetCumulativeReward());
             col.gameObject.SetActive(false);
         }
@@ -199,7 +204,7 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "power")
         {
-            AddReward(0.0025f);
+            AddReward(0.0155f);
             //Debug.Log(GetCumulativeReward());            
             col.gameObject.SetActive(false);
             power = true;
@@ -214,7 +219,7 @@ public class PacmanAgent : Agent
         life--;
         if (life > 0)
         {
-            AddReward(-1f);
+            AddReward(-2f);
             //Debug.Log(GetCumulativeReward());
             vite.text = "Vite rimaste = " + life;
             transform.position = startPosition;
@@ -222,7 +227,7 @@ public class PacmanAgent : Agent
         }
         else
         {
-            AddReward(-1.5f);
+            AddReward(-2.5f);
             //Debug.Log("Perso");
             Debug.Log("SCONFITTA EndEpisode = "/*+GetCumulativeReward() */+ " " + this.name);
             EndEpisode();

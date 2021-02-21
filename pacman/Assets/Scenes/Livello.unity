@@ -25471,8 +25471,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
-    NumStackedVectorObservations: 1
+    VectorObservationSize: 3
+    NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 030000000300000005000000
@@ -34901,8 +34901,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
-    NumStackedVectorObservations: 1
+    VectorObservationSize: 3
+    NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 030000000300000005000000
