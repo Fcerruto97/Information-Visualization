@@ -14,13 +14,12 @@ public class PacmanAgent : Agent
     private int life, countEat, countSfereEat;
     float countdownPowerUp, countdownReset;
     bool reset = false;
-    Vector3 startPosition;
     public GameObject gruppo;
 
     // Start is called before the first frame update
     public override void Initialize()
     {
-        startPosition = transform.position;
+        transform.localPosition = new Vector3(0f, 0f, 0f);
         rigidBody = GetComponent<Rigidbody>();
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
@@ -32,7 +31,6 @@ public class PacmanAgent : Agent
     }
 
     public override void OnEpisodeBegin(){
-        Debug.Log("New Game");    
         Reset();
     }
     
@@ -67,7 +65,7 @@ public class PacmanAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position);        
+        sensor.AddObservation(transform.localPosition);        
     }
 
     //da modificare
@@ -80,12 +78,12 @@ public class PacmanAgent : Agent
 
             MoveAgent(actionBuffers.DiscreteActions);
 
-            if (transform.position.x > 9.4f + dist && transform.position.z > 0.5)
+            if (transform.position.x > 9.4f + dist && transform.position.z > 0.5f)
             {
                 transform.position = new Vector3(-8.5f + dist, 0f, 0.5f);
             }
 
-            if (transform.position.x < -8.9f + dist && transform.position.z > 0.5)
+            if (transform.position.x < -8.9f + dist && transform.position.z > 0.5f)
             {
                 transform.position = new Vector3(9.0f + dist, 0f, 0.5f);
             }            
@@ -95,7 +93,7 @@ public class PacmanAgent : Agent
     public void MoveAgent(ActionSegment<int> act)
     {
 
-        AddReward(-0.000001f);
+        AddReward(-0.0001f);
 
         var dirToGo = Vector3.zero;        
         var forwardAxis = act[0];
@@ -153,7 +151,7 @@ public class PacmanAgent : Agent
     private void Reset()
     {
         //verificare settaggio parametri iniziale
-        transform.position = startPosition;
+        transform.localPosition = new Vector3(0f,0f,0f);
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
         life = 3;
@@ -222,7 +220,7 @@ public class PacmanAgent : Agent
             AddReward(-2f);
             //Debug.Log(GetCumulativeReward());
             vite.text = "Vite rimaste = " + life;
-            transform.position = startPosition;
+            transform.localPosition = new Vector3(0f, 0f, 0f);
             reset = true;
         }
         else

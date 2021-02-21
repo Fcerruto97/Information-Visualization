@@ -114,8 +114,7 @@ public class EnemyAi : MonoBehaviour
     private void Preso() {
         //un fantasma ha catturato il pacman?
         if (int.Parse(vite.text.Split(' ')[3]) != viteAttuali)
-        {
-            Debug.Log(agent.name);
+        {            
             if (viteAttuali == 1)
                 transform.position = startPoint;
             GetComponent<Renderer>().material = mio;
