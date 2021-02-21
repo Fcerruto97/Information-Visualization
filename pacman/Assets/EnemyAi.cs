@@ -56,6 +56,7 @@ public class EnemyAi : MonoBehaviour
 
     private void Update()
     {
+        Preso();
         //devo resettare la posizione
         if (reset)
         {
@@ -74,9 +75,7 @@ public class EnemyAi : MonoBehaviour
             }
         }
         else
-        {
-            Preso();
-            if (reset) return;
+        {           
             //il fantasma deve rimanere nello spawn o può iniziare la ricerca?
             if (!awake) { StartCoroutine(TimerAwake()); }
             else
@@ -116,12 +115,15 @@ public class EnemyAi : MonoBehaviour
         //un fantasma ha catturato il pacman?
         if (int.Parse(vite.text.Split(' ')[3]) != viteAttuali)
         {
+            Debug.Log(agent.name);
+            if (viteAttuali == 1)
+                transform.position = startPoint;
             GetComponent<Renderer>().material = mio;
-            reset = true;
+            reset = true;            
             walkPoint = startPoint;
             walkPointSet = true;
             agent.SetDestination(walkPoint); 
-            viteAttuali = int.Parse(vite.text.Split(' ')[3]);
+            viteAttuali = int.Parse(vite.text.Split(' ')[3]);            
         }
     }
 

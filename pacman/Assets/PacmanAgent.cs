@@ -64,11 +64,6 @@ public class PacmanAgent : Agent
             discreteActionsOut[2] = 4;
         }
     }
-    
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        sensor.AddObservation(transform.position);
-    }
 
     //da modificare
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -82,12 +77,12 @@ public class PacmanAgent : Agent
 
             if (transform.position.x > 9.4f + dist)
             {
-                transform.position = new Vector3(-8.5f+ + dist, 0f, 0.4f);
+                transform.position = new Vector3(-8.5f + dist, 0f, 0.5f);
             }
 
             if (transform.position.x < -8.9f + dist)
             {
-                transform.position = new Vector3(9.0f+ + dist, 0f, 0.4f);
+                transform.position = new Vector3(9.0f + dist, 0f, 0.5f);
             }            
         }
     }
@@ -194,7 +189,7 @@ public class PacmanAgent : Agent
         {
             AddReward(0.001f);
             //Debug.Log(GetCumulativeReward());
-            Destroy(col.gameObject);
+            col.gameObject.SetActive(false);
         }
 
         if (col.gameObject.tag == "ghost")
@@ -206,7 +201,7 @@ public class PacmanAgent : Agent
         {
             AddReward(0.0025f);
             //Debug.Log(GetCumulativeReward());            
-            Destroy(col.gameObject);
+            col.gameObject.SetActive(false);
             power = true;
             countEat = 0;
             RequestDecision();
