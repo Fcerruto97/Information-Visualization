@@ -47,21 +47,21 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11352}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11382}
     - Class: 114
-      Script: {instanceID: 11800}
+      Script: {instanceID: 11806}
     - Class: 114
-      Script: {instanceID: 12642}
+      Script: {instanceID: 12648}
     - Class: 114
-      Script: {instanceID: 13016}
+      Script: {instanceID: 13022}
     - Class: 114
-      Script: {instanceID: 13552}
+      Script: {instanceID: 13558}
     - Class: 114
-      Script: {instanceID: 14544}
+      Script: {instanceID: 14550}
     - Class: 114
-      Script: {instanceID: 15314}
+      Script: {instanceID: 15320}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -114,25 +114,25 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11352}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11382}
     - Class: 114
-      Script: {instanceID: 11800}
+      Script: {instanceID: 11806}
     - Class: 114
-      Script: {instanceID: 12642}
+      Script: {instanceID: 12648}
     - Class: 114
-      Script: {instanceID: 13016}
+      Script: {instanceID: 13022}
     - Class: 114
-      Script: {instanceID: 13344}
+      Script: {instanceID: 13350}
     - Class: 114
-      Script: {instanceID: 13552}
+      Script: {instanceID: 13558}
     - Class: 114
-      Script: {instanceID: 13646}
+      Script: {instanceID: 13652}
     - Class: 114
-      Script: {instanceID: 14544}
+      Script: {instanceID: 14550}
     - Class: 114
-      Script: {instanceID: 15314}
+      Script: {instanceID: 15320}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -177,21 +177,21 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11346}
+      Script: {instanceID: 11352}
     - Class: 114
-      Script: {instanceID: 11376}
+      Script: {instanceID: 11382}
     - Class: 114
-      Script: {instanceID: 11800}
+      Script: {instanceID: 11806}
     - Class: 114
-      Script: {instanceID: 12642}
+      Script: {instanceID: 12648}
     - Class: 114
-      Script: {instanceID: 13016}
+      Script: {instanceID: 13022}
     - Class: 114
-      Script: {instanceID: 13552}
+      Script: {instanceID: 13558}
     - Class: 114
-      Script: {instanceID: 14544}
+      Script: {instanceID: 14550}
     - Class: 114
-      Script: {instanceID: 15314}
+      Script: {instanceID: 15320}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -838,4 +838,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/Game Over.unity
   - Assets/Scenes/Livello_Player.unity
   - Assets/Scenes/Vittoria.unity
-  playerPath: C:/Users/Simone/Desktop/pacman.exe
+  playerPath: C:/Users/Simone/Desktop/BUILD/pacman.exe
