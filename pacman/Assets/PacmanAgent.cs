@@ -19,7 +19,7 @@ public class PacmanAgent : Agent
     // Start is called before the first frame update
     public override void Initialize()
     {
-        transform.localPosition = new Vector3(0f, 0f, 0f);
+        transform.localPosition = new Vector3(0f, 0f, -6.5f);
         rigidBody = GetComponent<Rigidbody>();
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
@@ -27,7 +27,8 @@ public class PacmanAgent : Agent
         power = false;
         countEat = 0;
         countSfereEat = 240;
-        vite.text = "Vite rimaste = " + life;        
+        vite.text = "Vite rimaste = " + life;
+        SetReward(0);
     }
 
     public override void OnEpisodeBegin(){
@@ -65,7 +66,8 @@ public class PacmanAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.localPosition);        
+        sensor.AddObservation(transform.localPosition);
+      
     }
 
     //da modificare
@@ -78,12 +80,12 @@ public class PacmanAgent : Agent
 
             MoveAgent(actionBuffers.DiscreteActions);
 
-            if (transform.position.x > 9.4f + dist && transform.position.z > 0.5f)
+            if (transform.position.x > 9.6f + dist && transform.position.z > 0.5f)
             {
                 transform.position = new Vector3(-8.5f + dist, 0f, 0.5f);
             }
 
-            if (transform.position.x < -8.9f + dist && transform.position.z > 0.5f)
+            if (transform.position.x < -9.1f + dist && transform.position.z > 0.5f)
             {
                 transform.position = new Vector3(9.0f + dist, 0f, 0.5f);
             }            
@@ -93,7 +95,7 @@ public class PacmanAgent : Agent
     public void MoveAgent(ActionSegment<int> act)
     {
 
-        AddReward(-0.0001f);
+        AddReward(-0.000025f);
 
         var dirToGo = Vector3.zero;        
         var forwardAxis = act[0];
@@ -143,15 +145,14 @@ public class PacmanAgent : Agent
 
     private void FixedUptade()
     {
-        //qualcosa da aggiungere sicuro video minuto 8
-        //fare qualcosa prima di chiamare il request decision
+      
         RequestDecision();
     }
 
     private void Reset()
     {
         //verificare settaggio parametri iniziale
-        transform.localPosition = new Vector3(0f,0f,0f);
+        transform.localPosition = new Vector3(0f,0f, -6.5f); 
         countdownPowerUp = 0f;
         countdownReset = 7.0f;
         life = 3;
@@ -173,14 +174,14 @@ public class PacmanAgent : Agent
     {
         if (col.gameObject.tag == "bonus")
         {
-            AddReward(0.015f);
+            AddReward(0.004f);
             //Debug.Log(GetCumulativeReward());
             col.gameObject.SetActive(false);
             if (countSfereEat == 1)
             {
-                AddReward(5f);
+                AddReward(4.5f);
                 //Debug.Log("Vittoria");
-                Debug.Log("VITTORIA EndEpisode = " + /*GetCumulativeReward());+*/ " " + this.name);
+                Debug.Log("VITTORIA EndEpisode = " + GetCumulativeReward()+ " " + this.name);
                 EndEpisode();
             }
             else {
@@ -190,7 +191,7 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "cerry")
         {
-            AddReward(0.01f);
+            AddReward(0.002f);
             //Debug.Log(GetCumulativeReward());
             col.gameObject.SetActive(false);
         }
@@ -202,7 +203,7 @@ public class PacmanAgent : Agent
 
         if (col.gameObject.tag == "power")
         {
-            AddReward(0.0155f);
+            AddReward(0.005f);
             //Debug.Log(GetCumulativeReward());            
             col.gameObject.SetActive(false);
             power = true;
@@ -210,6 +211,14 @@ public class PacmanAgent : Agent
             RequestDecision();
             countdownPowerUp += 10;
         }
+
+        /*if (col.gameObject.tag == "porta")
+        {
+            gameOver();
+           // Debug.Log("Aggio pigliato o mur!");
+
+
+        }*/
     }
 
     private void gameOver()
@@ -217,17 +226,17 @@ public class PacmanAgent : Agent
         life--;
         if (life > 0)
         {
-            AddReward(-2f);
+            AddReward(-0.5f);
             //Debug.Log(GetCumulativeReward());
             vite.text = "Vite rimaste = " + life;
-            transform.localPosition = new Vector3(0f, 0f, 0f);
+            transform.localPosition = new Vector3(0f, 0f, -6.5f);
             reset = true;
         }
         else
         {
-            AddReward(-2.5f);
+            AddReward(-2f);
             //Debug.Log("Perso");
-            Debug.Log("SCONFITTA EndEpisode = "/*+GetCumulativeReward() */+ " " + this.name);
+            Debug.Log("SCONFITTA EndEpisode = "+GetCumulativeReward()+ " " + this.name);
             EndEpisode();
         }
     }
@@ -244,7 +253,9 @@ public class PacmanAgent : Agent
             }
             else
             {
+                Debug.Log("Aggio pigliato o fantasm! " + this.transform.position);
                 gameOver();
+                
             }
         }
     }
