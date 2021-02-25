@@ -150,7 +150,7 @@ public class movimentoPACMAN : MonoBehaviour
             else { countSfereEat--; }
         }
 
-        if (col.gameObject.tag == "cerry")
+        if (col.gameObject.tag == "cherry")
         {
             Destroy(col.gameObject);
             count += 1000;

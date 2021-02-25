@@ -3749,6 +3749,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7612372562225396702, guid: 77b04dbcb11052d44a52415f20d5ace1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7785571509260776275, guid: 77b04dbcb11052d44a52415f20d5ace1,
         type: 3}
       propertyPath: m_Mass
@@ -11756,6 +11761,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7612372562225396702, guid: 77b04dbcb11052d44a52415f20d5ace1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7785571509260776275, guid: 77b04dbcb11052d44a52415f20d5ace1,
         type: 3}
       propertyPath: m_Mass
@@ -17223,6 +17233,11 @@ PrefabInstance:
     - target: {fileID: 7555038536016925017, guid: 77b04dbcb11052d44a52415f20d5ace1,
         type: 3}
       propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7612372562225396702, guid: 77b04dbcb11052d44a52415f20d5ace1,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7785571509260776275, guid: 77b04dbcb11052d44a52415f20d5ace1,
@@ -24117,7 +24132,7 @@ PrefabInstance:
     - target: {fileID: 1484215935964939704, guid: 60c2480153d4da841ab193c749b9e87c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.44
+      value: 1.97
       objectReference: {fileID: 0}
     - target: {fileID: 1484215935964939704, guid: 60c2480153d4da841ab193c749b9e87c,
         type: 3}
@@ -45176,6 +45191,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7612372562225396702, guid: 77b04dbcb11052d44a52415f20d5ace1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7785571509260776275, guid: 77b04dbcb11052d44a52415f20d5ace1,
         type: 3}
       propertyPath: m_Mass
@@ -48131,7 +48151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1894194325
 Transform:
   m_ObjectHideFlags: 0

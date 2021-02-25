@@ -80,14 +80,15 @@ public class PacmanAgent : Agent
 
             MoveAgent(actionBuffers.DiscreteActions);
 
-            if (transform.position.x > 9.6f + dist && transform.position.z > 0.5f)
+            if (transform.position.x > (9.5f + dist) && transform.position.z > 0.5f)
             {
-                transform.position = new Vector3(-8.5f + dist, 0f, 0.5f);
+                Debug.Log(transform.position);
+                transform.position = new Vector3(-9.3f + dist, 0f, 0.5f);
             }
 
-            if (transform.position.x < -9.1f + dist && transform.position.z > 0.5f)
+            if (transform.position.x < (-9.5f + dist) && transform.position.z > 0.5f)
             {
-                transform.position = new Vector3(9.0f + dist, 0f, 0.5f);
+                transform.position = new Vector3(9.3f + dist, 0f, 0.5f);
             }            
         }
     }
@@ -189,7 +190,7 @@ public class PacmanAgent : Agent
             }
         }
 
-        if (col.gameObject.tag == "cerry")
+        if (col.gameObject.tag == "cherry")
         {
             AddReward(0.002f);
             //Debug.Log(GetCumulativeReward());
@@ -211,14 +212,6 @@ public class PacmanAgent : Agent
             RequestDecision();
             countdownPowerUp += 10;
         }
-
-        /*if (col.gameObject.tag == "porta")
-        {
-            gameOver();
-           // Debug.Log("Aggio pigliato o mur!");
-
-
-        }*/
     }
 
     private void gameOver()
@@ -253,7 +246,7 @@ public class PacmanAgent : Agent
             }
             else
             {
-                Debug.Log("Aggio pigliato o fantasm! " + this.transform.position);
+                Debug.Log("Aggio pigliato o fantasm! " +this.name+" "+ this.transform.position);
                 gameOver();
                 
             }
